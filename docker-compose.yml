@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  rabbitmq1:
+    image: "rabbitmq:3-management"
+    hostname: "rabbitmq1"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "test1500"
+      RABBITMQ_NODENAME: "rabbit@rabbitmq1"
+      RABBITMQ_CLUSTER_NAME: "rabbit-cluster"
+    networks:
+      - rabbitmq-network
+    volumes:
+      - rabbitmq-data-1:/var/lib/rabbitmq
+
+  rabbitmq2:
+    image: "rabbitmq:3-management"
+    hostname: "rabbitmq2"
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "test1500"
+      RABBITMQ_NODENAME: "rabbit@rabbitmq2"
+      RABBITMQ_CLUSTER_NAME: "rabbit-cluster"
+      RABBITMQ_CONFIG_FILE: /etc/rabbitmq/advanced.config
+    networks:
+      - rabbitmq-network
+    volumes:
+      - rabbitmq-data-2:/var/lib/rabbitmq
+      - ./advanced.config:/etc/rabbitmq/advanced.config
+
+networks:
+  rabbitmq-network:
+    driver: bridge
+
+volumes:
+  rabbitmq-data-1:
+    driver: local
+  rabbitmq-data-2:
+    driver: local
